@@ -6,6 +6,9 @@ name: Deploy Stock API
 on:
   workflow_dispatch:
 
+env:
+  AZURE_WEBAPP_NAME: "app-stock-api-westeurpe-dev-001" 
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,3 +25,16 @@ jobs:
 
       - name: Build
         run: dotnet build ./API/API.csproj --configuration Release --no-restore
+
+        #publish the app
+      - name: Publish
+        run: dotnet publish ./API/API.csproj --configuration Release --output ./publish
+
+        #deploy the app to azure
+      - name: Deploy
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.API_PUPLISH_PROFILE }}
+          package: ./publish
+    
