@@ -1,0 +1,24 @@
+
+#github action to deploy the apiStock app to azure
+
+name: Deploy Stock API
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Install dependencies
+        run: dotnet restore ./API/API.csproj
+
+      - name: Build
+        run: dotnet build ./API/API.csproj --configuration Release
