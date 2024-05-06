@@ -1,0 +1,25 @@
+# ...
+
+steps:
+  # ...
+
+  - name: Login to Azure
+    uses: azure/login@v1
+    with:
+      creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+  - name: Install dependencies
+    run: dotnet restore ./API/API.csproj
+
+  - name: Build
+    run: dotnet build ./API/API.csproj --configuration Release --no-restore
+
+  - name: Publish
+    run: dotnet publish ./API/API.csproj --configuration Release --output ./publish
+
+  - name: Deploy
+    uses: azure/webapps-deploy@v2
+    with:
+      app-name: ${{ env.AZURE_WEBAPP_NAME }}
+      publish-profile: ${{ secrets.API_PUPLISH_SECRET }}
+      package: ./publish
